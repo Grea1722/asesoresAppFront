@@ -219,7 +219,7 @@ const EditarCliente = () => {
 
                   <input
                     type="submit"
-                    className="bg-gray-800 w-full mt-5 p-2 text-white uppercase font-bold hover:bg-grey-900 cursor-pointer"
+                    className="bg-gray-800 w-full mt-5 p-2 text-white uppercase font-bold hover:bg-gray-900 cursor-pointer"
                     value="Editar Cliente"
                   />
                 </form>

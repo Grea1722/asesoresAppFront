@@ -55,8 +55,12 @@ const nuevoproducto = () => {
     },
     validationSchema: Yup.object({
       nombre: Yup.string().required("El nombre es obligatorio"),
-      precio: Yup.number().required("Precio Requerido"),
-      existencia: Yup.number().required("Se requiere existencia"),
+      precio: Yup.number()
+        .required("Precio Requerido")
+        .positive("No se aceptan numeros negativos"),
+      existencia: Yup.number()
+        .required("Se requiere existencia")
+        .integer("La existencia solo pueden ser numeros enteros"),
     }),
     onSubmit: async (valores) => {
       const { nombre, precio, existencia } = valores;
@@ -158,7 +162,7 @@ const nuevoproducto = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="existencia"
                 type="number"
-                placeholder="existencia de producto"
+                placeholder="Cantidad disponible"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 value={formik.values.existencia}
