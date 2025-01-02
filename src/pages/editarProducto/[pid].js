@@ -1,7 +1,8 @@
 import Layout from "@/components/layout";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Formik } from "formik";
 import { useRouter } from "next/router";
+import Swal from "sweetalert2";
 import * as Yup from "yup";
 
 const OBTENER_PRODUCTO = gql`
@@ -34,6 +35,9 @@ const EditarProducto = () => {
     variables: { id: pid },
   });
 
+  //Mutation para modificar producto
+  const [actualizarProducto] = useMutation(ACTUALIZAR_PRODUCTO);
+
   //schema de validacion
   const schemaValidacion = Yup.object({
     nombre: Yup.string().required("El nombre del producto es obligatorio"),
@@ -45,10 +49,36 @@ const EditarProducto = () => {
       .required("El precio es obligatorio")
       .positive("No se aceptan numeros negativos"),
   });
+
+  if (!data) {
+    return "Accion no permitida";
+  }
+
   if (loading) return "cargando...";
 
-  const actualizarInfoProducto = (valores) => {
-    console.log(valores);
+  const actualizarInfoProducto = async (valores) => {
+    const { nombre, existencia, precio } = valores;
+    //Actualizar producto
+    try {
+      const { data } = await actualizarProducto({
+        variables: {
+          id: pid,
+          input: {
+            nombre,
+            existencia,
+            precio,
+          },
+        },
+      });
+
+      //Redirigir hacia productos
+      router.push("/productos");
+
+      //Mostrar alerta
+      Swal.fire("Correcto", "El producto se actualizo con exito", "succes");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const { obtenerProducto } = data;
