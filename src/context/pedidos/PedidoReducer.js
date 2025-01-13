@@ -16,6 +16,15 @@ export default (state, action) => {
         ...state,
         productos: action.payload,
       };
+    case CANTIDAD_PRODUCTO:
+      return {
+        ...state,
+        productos: state.productos.map((producto) =>
+          producto.id === action.payload.id
+            ? (producto = action.payload)
+            : producto
+        ),
+      };
     default:
       return state;
   }
