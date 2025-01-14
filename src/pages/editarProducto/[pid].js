@@ -58,6 +58,7 @@ const EditarProducto = () => {
 
   const actualizarInfoProducto = async (valores) => {
     const { nombre, existencia, precio } = valores;
+    console.log(nombre, existencia, precio);
     //Actualizar producto
     try {
       const { data } = await actualizarProducto({
@@ -75,7 +76,7 @@ const EditarProducto = () => {
       router.push("/productos");
 
       //Mostrar alerta
-      Swal.fire("Correcto", "El producto se actualizo con exito", "succes");
+      Swal.fire("Correcto", "El producto se actualizo con exito", "success");
     } catch (error) {
       console.log(error);
     }
@@ -157,7 +158,7 @@ const EditarProducto = () => {
                     <input
                       className="shadow appearance-none border rounded w-full py-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       id="existencia"
-                      type="text"
+                      type="number"
                       placeholder="Cantidad de producto"
                       onChange={props.handleChange}
                       onBlur={props.handleBlur}

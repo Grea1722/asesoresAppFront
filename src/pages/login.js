@@ -44,13 +44,15 @@ const login = () => {
         guardarMensaje("Autenticando...");
 
         //guardar token en local storage
-        const { token } = data.autenticarUsuario;
-        localStorage.setItem("token", token);
+        setTimeout(() => {
+          const { token } = data.autenticarUsuario;
+          localStorage.setItem("token", token);
+        }, 1000);
         //Redireccionar hacia clientes
         setTimeout(() => {
           guardarMensaje(null);
           routing.push("/");
-        }, 3000);
+        }, 2000);
       } catch (error) {
         guardarMensaje(error.message.replace("GraphQL error: ", ""));
         setTimeout(() => {

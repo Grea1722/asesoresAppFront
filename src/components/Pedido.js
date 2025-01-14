@@ -1,10 +1,25 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const ACTUALIZAR_PEDIDO = gql`
   mutation actualizarPedido($id: ID!, $input: PedidoInput) {
     actualizarPedido(id: $id, input: $input) {
       estado
+    }
+  }
+`;
+
+const ELIMINAR_PEDIDO = gql`
+  mutation eliminarPedido($id: ID!) {
+    eliminarPedido(id: $id)
+  }
+`;
+
+const OBTENER_PEDIDOS = gql`
+  query obtenerPedidosVendedor {
+    obtenerPedidosVendedor {
+      id
     }
   }
 `;
@@ -20,6 +35,22 @@ const Pedido = ({ pedido }) => {
 
   //mutation para cambiar el estado
   const [actualizarPedido] = useMutation(ACTUALIZAR_PEDIDO);
+  const [eliminarPedido] = useMutation(ELIMINAR_PEDIDO, {
+    update(cache) {
+      const { obtenerPedidosVendedor } = cache.readQuery({
+        query: OBTENER_PEDIDOS,
+      });
+
+      cache.writeQuery({
+        query: OBTENER_PEDIDOS,
+        data: {
+          obtenerPedidosVendedor: obtenerPedidosVendedor.filter(
+            (pedido) => pedido.id !== id
+          ),
+        },
+      });
+    },
+  });
   const [estadoPedido, setEstadoPedido] = useState(estado);
   const [clase, setClase] = useState("");
 
@@ -56,6 +87,31 @@ const Pedido = ({ pedido }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const confirmarEliminarPedido = () => {
+    Swal.fire({
+      title: "Deseas eliminar cliente?",
+      text: "Esta accion no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, borrar",
+      cancelButtonText: "No, cancelar",
+    }).then(async (result) => {
+      if (result.value) {
+        try {
+          const data = await eliminarPedido({
+            variables: { id },
+          });
+
+          Swal.fire("Eliminado", data.eliminarPedido, "succes");
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
   };
 
   return (
@@ -134,6 +190,7 @@ const Pedido = ({ pedido }) => {
         <button
           className="flex items-center mt-4 bg-red-800 px-5 py-2 inline-block text-white rounded leading-tight
         uppercase text-xs font-bold"
+          onClick={confirmarEliminarPedido}
         >
           Eliminar pedido
           <svg
